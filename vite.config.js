@@ -3,7 +3,7 @@ import { svelte } from '@sveltejs/vite-plugin-svelte'
 
 export default defineConfig({
   plugins: [svelte()],
-  base: '/whyheavens/',
+  base: '/',
   publicDir: 'static',
   build: {
     outDir: 'dist'
