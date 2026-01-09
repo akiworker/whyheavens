@@ -328,6 +328,10 @@
   // Start audio with fade in when user enters site
   function handleSiteEnter() {
     siteEntered = true;
+    if (!audio) {
+      console.error('Audio not initialized');
+      return;
+    }
     audio.volume = 0;
     audio.play().then(() => {
       isPlaying = true;
@@ -342,7 +346,8 @@
           audio.volume = vol;
         }
       }, 50);
-    }).catch(() => {
+    }).catch((err) => {
+      console.error('Audio play failed:', err);
       isPlaying = false;
     });
   }

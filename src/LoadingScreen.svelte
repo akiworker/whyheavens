@@ -4,39 +4,45 @@
   let visible = true;
   let fadeOut = false;
   let ready = false;
+  let mouseX = 0;
+  let mouseY = 0;
   
   const dispatch = createEventDispatcher();
   
-  // Show "click to enter" after brief loading
   setTimeout(() => {
     ready = true;
-  }, 800);
+  }, 1000);
   
-  function handleEnter() {
+  function handleMove(e) {
+    mouseX = e.clientX;
+    mouseY = e.clientY;
+  }
+  
+  function handleClick() {
     if (!ready) return;
     fadeOut = true;
     dispatch('enter');
     setTimeout(() => { 
       visible = false;
-      document.body.style.overflow = '';
-    }, 500);
+    }, 600);
   }
 </script>
 
 {#if visible}
   <!-- svelte-ignore a11y-click-events-have-key-events -->
   <!-- svelte-ignore a11y-no-static-element-interactions -->
-  <div class="loader" class:fadeOut on:click={handleEnter}>
+  <div class="loader" class:fadeOut class:ready on:mousemove={handleMove} on:click={handleClick}>
     {#if !ready}
       <div class="ispinner">
         {#each Array(8) as _}
           <div class="ispinner-blade"></div>
         {/each}
       </div>
-    {:else}
-      <div class="enter-prompt" class:show={ready}>
-        <span class="enter-text">click to enter</span>
-        <div class="enter-ring"></div>
+    {/if}
+    
+    {#if ready}
+      <div class="cursor-hint" style="left: {mouseX}px; top: {mouseY}px;">
+        <span>enter</span>
       </div>
     {/if}
   </div>
@@ -51,11 +57,12 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    flex-direction: column;
-    gap: 20px;
     opacity: 1;
-    transition: opacity 0.5s ease;
-    cursor: pointer;
+    transition: opacity 0.6s ease;
+  }
+  
+  .loader.ready {
+    cursor: none;
   }
   
   .loader.fadeOut {
@@ -97,65 +104,39 @@
     100% { opacity: 0.15; }
   }
   
-  .enter-prompt {
+  .cursor-hint {
+    position: fixed;
+    pointer-events: none;
+    transform: translate(-50%, -50%);
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.08);
     display: flex;
-    flex-direction: column;
     align-items: center;
-    gap: 16px;
+    justify-content: center;
     opacity: 0;
-    transform: scale(0.9);
-    animation: fadeInPrompt 0.5s ease forwards;
+    animation: cursorIn 0.4s ease forwards;
+    transition: width 0.2s, height 0.2s;
   }
   
-  @keyframes fadeInPrompt {
+  .cursor-hint span {
+    font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.6);
+  }
+  
+  @keyframes cursorIn {
+    from {
+      opacity: 0;
+      transform: translate(-50%, -50%) scale(0.5);
+    }
     to {
       opacity: 1;
-      transform: scale(1);
-    }
-  }
-  
-  .enter-text {
-    font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
-    font-size: 14px;
-    font-weight: 400;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: rgba(255, 255, 255, 0.5);
-  }
-  
-  .enter-ring {
-    width: 60px;
-    height: 60px;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: 50%;
-    position: relative;
-    animation: pulse 2s ease-in-out infinite;
-  }
-  
-  .enter-ring::before {
-    content: '';
-    position: absolute;
-    inset: 8px;
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    border-radius: 50%;
-  }
-  
-  .enter-ring::after {
-    content: '';
-    position: absolute;
-    inset: 18px;
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 50%;
-  }
-  
-  @keyframes pulse {
-    0%, 100% {
-      transform: scale(1);
-      opacity: 1;
-    }
-    50% {
-      transform: scale(1.05);
-      opacity: 0.8;
+      transform: translate(-50%, -50%) scale(1);
     }
   }
 </style>
