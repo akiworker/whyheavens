@@ -2,6 +2,8 @@
   import { onMount } from 'svelte';
   import LoadingScreen from './LoadingScreen.svelte';
   
+  const base = import.meta.env.BASE_URL;
+  
   let show = false;
   let minimized = false;
   let closed = false;
@@ -308,7 +310,7 @@
     }, 6000);
     
     // Init audio
-    audio = new Audio('/track.mp3');
+    audio = new Audio(base + 'track.mp3');
     audio.loop = true;
     audio.volume = audioVolume;
     audio.addEventListener('timeupdate', () => {
@@ -503,7 +505,7 @@
             <path d="M10.5 11c.5-1.5 0-3-1.5-3.5s-3 .5-3.5 2l-1 4c-1 4 1 7 5 8s7-1 8-5l2-6c.5-1.5 0-3-1.5-3.5s-3 .5-3.5 2l-1 3"/>
           </svg>
         {:else if notification.icon === 'telegram'}
-          <img src="/telegram.svg" alt="" width="24" height="24" />
+          <img src="{base}telegram.svg" alt="" width="24" height="24" />
         {:else if notification.icon === 'check'}
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#34C759" stroke-width="2">
             <path d="M20 6L9 17l-5-5"/>
@@ -543,9 +545,9 @@
   "
 >
   {#if isPointer}
-    <img src="/cursor-pointer.svg" alt="" draggable="false" />
+    <img src="{base}cursor-pointer.svg" alt="" draggable="false" />
   {:else}
-    <img src="/cursor-default.svg" alt="" draggable="false" />
+    <img src="{base}cursor-default.svg" alt="" draggable="false" />
   {/if}
 </div>
 
@@ -585,9 +587,9 @@
                   <path d="M4 20c0-4 4-6 8-6s8 2 8 6"/>
                 </svg>
               {:else if item.icon === 'telegram'}
-                <img src="/telegram.svg" alt="" width="20" height="20" />
+                <img src="{base}telegram.svg" alt="" width="20" height="20" />
               {:else if item.icon === 'spotify'}
-                <img src="/spotify.svg" alt="" width="20" height="20" />
+                <img src="{base}spotify.svg" alt="" width="20" height="20" />
               {:else if item.icon === 'star'}
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
                   <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
@@ -646,9 +648,9 @@
                 <line x1="12" y1="2" x2="12" y2="15"/>
               </svg>
             {:else if item.icon === 'telegram'}
-              <img src="/telegram.svg" alt="" width="16" height="16" />
+              <img src="{base}telegram.svg" alt="" width="16" height="16" />
             {:else if item.icon === 'spotify'}
-              <img src="/spotify.svg" alt="" width="16" height="16" />
+              <img src="{base}spotify.svg" alt="" width="16" height="16" />
             {:else if item.icon === 'search'}
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
                 <circle cx="11" cy="11" r="8"/>
@@ -684,7 +686,7 @@
 <div class="audio-player" class:playing={isPlaying}>
   <div class="audio-top">
     <div class="audio-artwork">
-      <img src="/track.webp" alt="" />
+      <img src="{base}track.webp" alt="" />
       <div class="audio-artwork-overlay">
         {#if isPlaying}
           <div class="audio-bars">
@@ -759,7 +761,7 @@
 <main>
   <div class="background">
     <video autoplay muted loop playsinline class="bg-video">
-      <source src="/bg.mp4" type="video/mp4">
+      <source src="{base}bg.mp4" type="video/mp4">
     </video>
   </div>
 
@@ -795,7 +797,7 @@
       <!-- svelte-ignore a11y-click-events-have-key-events -->
       <div class="avatar-container" on:click={handleAvatarClick}>
         <img 
-          src="/avatar.webp" 
+          src="{base}avatar.webp" 
           alt="Avatar" 
           class="avatar"
           class:glitch={isGlitching}
@@ -812,7 +814,7 @@
       <div class="links">
         {#each links as link}
           <a href={link.url} target="_blank" rel="noopener noreferrer" class="link-btn" on:click={handleLinkClick}>
-            <img src="/{link.icon}.svg" alt="" class="icon" />
+            <img src="{base}{link.icon}.svg" alt="" class="icon" />
             <span class="btn-text">{link.title}</span>
             <span class="tooltip {link.tooltipPos}">{link.tooltip}</span>
             {#if link.icon === 'telegram' && showBadge}
