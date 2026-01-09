@@ -5,6 +5,7 @@
   const base = import.meta.env.BASE_URL;
   
   let show = false;
+  let siteEntered = false;
   let minimized = false;
   let closed = false;
   let windowEl;
@@ -312,7 +313,7 @@
     // Init audio
     audio = new Audio(base + 'track.mp3');
     audio.loop = true;
-    audio.volume = audioVolume;
+    audio.volume = 0; // Start at 0 for fade in
     audio.addEventListener('timeupdate', () => {
       if (!isDraggingProgress) {
         audioProgress = (audio.currentTime / audio.duration) * 100 || 0;
@@ -322,22 +323,29 @@
     audio.addEventListener('loadedmetadata', () => {
       audioDuration = audio.duration;
     });
-    
-    // Autoplay at 30% volume
+  });
+  
+  // Start audio with fade in when user enters site
+  function handleSiteEnter() {
+    siteEntered = true;
+    audio.volume = 0;
     audio.play().then(() => {
       isPlaying = true;
+      // Fade in volume over 2 seconds
+      let vol = 0;
+      const fadeIn = setInterval(() => {
+        vol += 0.015;
+        if (vol >= audioVolume) {
+          audio.volume = audioVolume;
+          clearInterval(fadeIn);
+        } else {
+          audio.volume = vol;
+        }
+      }, 50);
     }).catch(() => {
-      // Autoplay blocked - start on first click anywhere
       isPlaying = false;
-      const startAudio = () => {
-        audio.play().then(() => {
-          isPlaying = true;
-        });
-        document.removeEventListener('click', startAudio);
-      };
-      document.addEventListener('click', startAudio);
     });
-  });
+  }
   
   function toggleAudio() {
     if (isPlaying) {
@@ -551,7 +559,7 @@
   {/if}
 </div>
 
-<LoadingScreen />
+<LoadingScreen on:enter={handleSiteEnter} />
 
 <!-- Spotlight Search -->
 {#if spotlightOpen}
